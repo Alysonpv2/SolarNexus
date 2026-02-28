@@ -42,16 +42,59 @@ Monorepo com as seguintes aplicações:
 
 ## ⚡ Como rodar
 
+### Pré-requisitos
+
+- Node.js >= 18
+- pnpm >= 8 (`npm install -g pnpm`)
+- Docker + Docker Compose
+- Python >= 3.11 (para `apps/ai-service`)
+
+### Instalação
+
 ```bash
-# Instalar dependências
+# Instalar dependências Node.js
 pnpm install
 
-# Subir infraestrutura
+# Copiar variáveis de ambiente
+cp apps/api/.env.example apps/api/.env
+cp apps/web/.env.example apps/web/.env.local
+cp apps/ai-service/.env.example apps/ai-service/.env
+
+# Subir infraestrutura (PostgreSQL, Redis, InfluxDB, RabbitMQ)
 docker-compose up -d
 
-# Rodar todos os apps
+# Instalar dependências do serviço de IA
+cd apps/ai-service && pip install -r requirements.txt && cd ../..
+
+# Rodar todos os apps (web + api)
 pnpm dev
 ```
+
+### Rodando individualmente
+
+```bash
+# Apenas o frontend web
+pnpm --filter @solarnexus/web dev
+
+# Apenas a API
+pnpm --filter @solarnexus/api dev
+
+# Apenas o mobile
+pnpm --filter @solarnexus/mobile dev
+
+# Serviço de IA
+cd apps/ai-service && uvicorn main:app --reload
+```
+
+### URLs locais
+
+| Serviço | URL |
+|---|---|
+| Web | http://localhost:3000 |
+| API | http://localhost:3001/api |
+| AI Service | http://localhost:8000 |
+| RabbitMQ UI | http://localhost:15672 |
+| InfluxDB UI | http://localhost:8086 |
 
 ## 📄 Licença
 
